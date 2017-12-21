@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Cantoraz Chou
+  description: Ansible role to install and configure Nginx for Ubunut Linux
+  license: license (GPLv3)
+
+  min_ansible_version: 1.8
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+
+  galaxy_tags:
+    - web
+
+dependencies: []
