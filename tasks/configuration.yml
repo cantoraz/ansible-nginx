@@ -1,0 +1,87 @@
+# Refer to the role ‘jdauphant.nginx’
+# This file is modified from its ‘tasks/configuration.yml’
+
+---
+
+# Basic access authentication configuration
+
+- name: Ensure the directory of Basic Authentication files exists
+  file:
+    path: "{{ nginx_auth_basic_path }}"
+    state: directory
+    owner: "{{ nginx_conf_user }}"
+    group: "{{ nginx_conf_group }}"
+    mode: 0755
+  notify: reload nginx
+
+- name: Create HTTP Basic Authentication files
+  template:
+    src: "{{ nginx_auth_basic_template }}"
+    dest: "{{ nginx_auth_basic_path }}/{{ item.key }}"
+    mode: 0640
+    group: "{{ nginx_group }}"
+  when: item.value.state|default('present') != 'absent'
+  with_dict: "{{ nginx_auth_basic_files }}"
+  notify: reload nginx
+
+- name: Remove unwanted HTTP Basic Authentication files
+  file:
+    path: "{{ nginx_auth_basic_path }}/{{ item.key }}"
+    state: absent
+  when: item.value.state|default('present') == 'absent'
+  with_dict: "{{ nginx_auth_basic_files }}"
+  notify: reload nginx
+
+# Independent configuration
+
+- name: Ensure the directory of independent configuration files exists
+  file:
+    path: "{{ nginx_conf_path }}"
+    state: directory
+    owner: "{{ nginx_conf_user }}"
+    group: "{{ nginx_conf_group }}"
+    mode: 0755
+  notify: reload nginx
+
+- name: Create independent configuration files
+  template:
+    src: "{{ nginx_config_template }}"
+    dest: "{{ nginx_conf_path }}/{{ item.key }}.conf"
+  when: item.value.state|default('present') != 'absent'
+  with_dict: "{{ nginx_configs }}"
+  notify: reload nginx
+
+- name: Remove unwanted independent configuration files
+  file:
+    path: "{{ nginx_conf_path }}/{{ item.key }}.conf"
+    state: absent
+  when: item.value.state|default('present') == 'absent'
+  with_dict: "{{ nginx_configs }}"
+  notify: reload nginx
+
+# Configuration snippets
+
+- name: Ensure the directory of configuration snippets exists
+  file:
+    path: "{{ nginx_snippets_path }}"
+    state: directory
+    owner: "{{ nginx_conf_user }}"
+    group: "{{ nginx_conf_group }}"
+    mode: 0755
+  notify: reload nginx
+
+- name: Create configuration snippets
+  template:
+    src: "{{ nginx_config_template }}"
+    dest: "{{ nginx_snippets_path }}/{{ item.key }}.conf"
+  when: item.value.state|default('present') != 'absent'
+  with_dict: "{{ nginx_snippets }}"
+  notify: reload nginx
+
+- name: Remove unwanted snippets
+  file:
+    path: "{{ nginx_snippets_path }}/{{ item.key }}.conf"
+    state: absent
+  when: item.value.state|default('present') == 'absent'
+  with_dict: "{{ nginx_snippets }}"
+  notify: reload nginx

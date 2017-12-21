@@ -1,0 +1,37 @@
+# Refer to the role ‘geerlingguy.nginx’.
+# This file is modified from its ‘tasks/main.yml’.
+
+---
+
+- name: Define nginx_user.
+  set_fact:
+    nginx_user: "{{ __nginx_user }}"
+  when: nginx_user is not defined
+
+- name: Define nginx_group
+  set_fact:
+    nginx_group: "{{ __nginx_group }}"
+  when: nginx_group is not defined
+
+# Setup/install tasks.
+- include: setup.yml
+
+# Vhost configuration.
+- include: vhosts.yml
+
+# Configuration
+- include: configuration.yml
+
+# Nginx setup.
+- name: Copy nginx configuration in place.
+  template:
+    src: "{{ nginx_conf_template }}"
+    dest: "{{ nginx_conf_file_path }}"
+    owner: "{{ nginx_conf_user }}"
+    group: "{{ nginx_conf_group }}"
+    mode: 0644
+  notify:
+    - reload nginx
+
+- name: Ensure nginx is started and enabled to start at boot.
+  service: name=nginx state=started enabled=yes

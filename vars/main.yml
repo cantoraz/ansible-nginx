@@ -1,0 +1,19 @@
+# Refer to the role ‘geerlingguy.nginx’.
+# This file is copied from its ‘vars/Debian.yml’, especially when
+# ansible_os_family == 'Debian'
+
+---
+
+nginx_conf_user: root
+nginx_conf_group: root
+# root_group: root
+nginx_auth_basic_path: /etc/nginx/auth_basic
+nginx_snippets_path: /etc/nginx/snippets
+nginx_conf_path: /etc/nginx/conf.d
+nginx_conf_file_path: /etc/nginx/nginx.conf
+nginx_mime_file_path: /etc/nginx/mime.types
+nginx_pidfile: /run/nginx.pid
+nginx_vhost_path: /etc/nginx/sites-enabled
+nginx_default_vhost_path: /etc/nginx/sites-enabled/default
+__nginx_user: "www-data"
+__nginx_group: "www-data"
